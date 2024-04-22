@@ -16,9 +16,17 @@
 ### 实时监控界面、调取摄像头、streamcut
 - 人脸识别验证方式需要通过修改src/摄像头模块/vediocaption.py来实现，已基本完成监控实时查看与图片截流功能
 ### 烟雾/火焰检测
-- https://github.com/gengyanlei/fire-smoke-detect-yolov4.git
-### 人脸识别
-- https://github.com/BrandonJoffe/home_surveillance.git
+- https://github.com/ultralytics/ultralytics.git
+- 烟雾检测模块使用ultralytics公司开发的YOLOv8框架，已实现模型的使用功能。
+- 具体模型的训练还需要进一步跟进
+### 人脸识别/人脸验证
+- 人脸识别与人脸验证的区别
+
+![人脸识别与人脸验证的区别](pictures/人脸识别与人脸验证.png)
+- https://github.com/serengil/deepface.git
+- 人脸识别模块使用serengil公司开发的deepface框架，已实现模型的使用功能。
+- 具体模型的训练还需要进一步跟进
+### 行人重识别
 ### 报警
 - 需要查询一下如何调库实现蜂鸣器
 - 行人重识别：https://github.com/layumi/Person-reID_GAN
