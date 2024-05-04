@@ -8,7 +8,7 @@
 - 4.3完成用例图
 - 4.15完成烟雾检测模块demo
 - 4.22完成人脸检测和验证模块demo
-![alt text](whiteboard_exported_image.png)
+![alt text](pictures/whiteboard_exported_image.png)
 ## 各个模块参考资料
 ### 登陆界面
 - https://github.com/Vegemo-bear/flask-LiteAI
