@@ -1,3 +1,7 @@
 asserts
 src\火焰烟雾检测模块\ultralytics-8.1.0.zip
 src\人脸认证模块\deepface-master.zip
+src\后端整合\flask-LiteAI-main
+!src\后端整合\flask-LiteAI-main\myweb-flask\App
+src\前端整合\Vue3-LiteAI-main\
+!src\前端整合\Vue3-LiteAI-main\myweb-vue3\src

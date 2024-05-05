@@ -48,3 +48,4 @@ siamese_model.fit(X_train, y_train, batch_size=32, epochs=10, validation_data=(X
 
 # Evaluate the model
 siamese_model.evaluate(X_val, y_val)
+
