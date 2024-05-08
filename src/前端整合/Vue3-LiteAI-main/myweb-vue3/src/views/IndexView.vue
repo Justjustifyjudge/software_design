@@ -9,6 +9,9 @@ const HandleOCR = () => {
 const HandleLPDR = () => {
   router.push('/lpdr')
 }
+const HandleFire = () => {
+  router.push('/fire_monitor')
+}
 </script>
 
 <template>
@@ -33,6 +36,19 @@ const HandleLPDR = () => {
           <h5 class="proj">LPDR</h5>
           <p class="desc">实现交通中车牌文本的定位与识别</p>
           <el-button type="primary" @click="HandleLPDR">
+            <el-icon><IEpPromotion /></el-icon>
+            <span>进入</span>
+          </el-button>
+        </div>
+      </div>
+    </el-col>
+    <el-col :md="4" :offset="1">
+      <div class="container">
+        <img src="@/assets/lpdr.jpg" />
+        <div class="content">
+          <h5 class="proj">Fire_Smoke_Monitor</h5>
+          <p class="desc">实现烟雾-火焰监控</p>
+          <el-button type="primary" @click="HandleFire">
             <el-icon><IEpPromotion /></el-icon>
             <span>进入</span>
           </el-button>

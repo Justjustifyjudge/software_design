@@ -36,6 +36,11 @@ const router = createRouter({
           path: '/lpdr_project',
           name: 'lpdr_project',
           component: () => import('@/views/user_look/user_project/user_lpdr.vue')
+        },
+        {
+          path: '/fire_monitor',
+          name: 'fire_monitor',
+          component: () => import('@/views/user_look/test_api/monitor_fire.vue')
         }
       ]
     },

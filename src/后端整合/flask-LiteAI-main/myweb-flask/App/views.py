@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, Flask
 from .models import *
 from flask_jwt_extended import create_access_token
 import os, base64
@@ -6,9 +6,10 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from App.lpdr.lpdr import lp_img_preprocess, lp_refer, lp_postprocess, lp_generate_result
 from App.ppocrv3.ppocrv3 import pp_img_preprocess, pp_refer, pp_postprocess, pp_generate_result
-
+from App.fire_smoke_detect_mode.ultralytics.ultralytics.try_predict import generate_frames
+from flask_socketio import SocketIO, emit
 blue = Blueprint('user', __name__)
-
+socketio = SocketIO(blue)
 
 @blue.route('/')
 def test():
@@ -269,3 +270,14 @@ def user_upload():
             }
         })
         return res
+
+@blue.route('/fire_monitor', methods=['GET'])
+def fire_monitor():
+    while True:
+        data = generate_frames()
+        
+        # 发送图像数据给前端
+        socketio.emit('video_frame', data)
+        
+        # 保存当前帧图像（可选）
+        # cv2.imwrite('current_frame.jpg', frame)
