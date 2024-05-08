@@ -19,13 +19,13 @@ import { isCollapse } from './isCollapse'
         <el-sub-menu index="1">
           <template #title>
             <el-icon style="color: white"> <IEpPromotion /> </el-icon>
-            <span style="color: white"> 项目管理 </span>
+            <span style="color: white"> 人脸管理 </span>
           </template>
           <el-menu-item index="/ocr">
-            <el-icon><IEpPear /></el-icon> <span> 通用OCR </span>
+            <el-icon><IEpPear /></el-icon> <span> 陌生人脸管理 </span>
           </el-menu-item>
           <el-menu-item index="/lpdr">
-            <el-icon><IEpGrape /></el-icon> <span> 车牌定位与识别 </span>
+            <el-icon><IEpGrape /></el-icon> <span> 添加家庭成员 </span>
           </el-menu-item>
         </el-sub-menu>
       </el-menu>

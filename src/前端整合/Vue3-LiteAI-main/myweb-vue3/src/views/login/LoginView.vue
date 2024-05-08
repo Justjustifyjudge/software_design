@@ -35,7 +35,7 @@ const onSubmit = async () => {
   if (store.token.identity == '超级管理员' && store.token.username == 'vegemo-bear') {
     router.push('/')
   } else {
-    router.push('')
+    router.push('/')
   }
 }
 // ToDo: 人脸验证登陆功能

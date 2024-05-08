@@ -1,9 +1,13 @@
 from ultralytics import YOLO
 import cv2
-predit_model=YOLO(r'src\检测模块\ultralytics-8.1.0\ultralytics-8.1.0\model_onnx\best_3epoch.pt')
+predit_model=YOLO(r'C:\Users\linyiwu\Desktop\software_design\src\后端整合\flask-LiteAI-main\myweb-flask\App\fire_smoke_detect_mode\ultralytics\ultralytics\model_onnx\best_3epoch.pt')
 # predit_model.predict(source=0,save=True)
 
+from flask import Flask, Response
 
+from ultralytics import YOLO
+import cv2
+import base64
 
 def main():
     # 打开摄像头
@@ -49,6 +53,20 @@ def main():
 
     # 关闭所有打开的窗口
     cv2.destroyAllWindows()
+
+def generate_frames():
+    cap = cv2.VideoCapture(0)
+    ret, frame = cap.read()
+    if not ret:
+        return None
+    # 进行模型预测等处理
+    pred = predit_model(frame)
+    
+    # 将图像编码为JPEG格式并转换为base64字符串
+    _, buffer = cv2.imencode('.jpg', frame)
+    frame_data = base64.b64encode(buffer).decode('utf-8')
+    
+    return frame_data
 
 if __name__ == "__main__":
     main()
