@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import os
 import time
-
+import winsound
 
 
 video_capture = cv2.VideoCapture(0)
@@ -43,8 +43,6 @@ def loadface(path):
 # Initialize some variables
 known_face_encodings,known_face_names= loadface(folder_path)
 known_unknown_face_encodings,known_unknown_face_names=loadface(unknown_face_folder)
-
-
 face_locations = []
 face_encodings = []
 face_names = []
@@ -96,25 +94,17 @@ while True:
         bottom *= 4
         left *= 4
 
-        # Draw a box around the face
-        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-
-        # Draw a label with a name below the face
-        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
-        font = cv2.FONT_HERSHEY_DUPLEX
-        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
         if name == "Unknown":
 
             #如果能在陌生人中找到 不保存进unknown文件夹，否则保存
             # 裁剪出未知人脸的区域q
-            print("Unknown")
             # # 检查这个人脸是否已经存在于未知人脸文件夹中
             matches = face_recognition.compare_faces(known_unknown_face_encodings, encoding,tolerance=0.5)
-            print(matches)
             if not any(matches):
                 # 报警（未实现）
-                print("new")
+                # 调用Windows的beep命令，发出警报声
+                winsound.PlaySound("SystemExit", winsound.SND_ALIAS)
+                print("new unknower")
                 # 如果没有找到匹配项，保存这个新的人脸
                 timestamp = int(time.time())  # 使用当前时间戳作为文件名
                 filename = os.path.join(unknown_face_folder, f"Unknown_face_{timestamp}.jpg")
@@ -124,6 +114,17 @@ while True:
                 print(f"Unknown face saved as {filename}")
                 known_unknown_face_encodings.append(encoding)
                 known_unknown_face_names.append(f"Unknown_face_{timestamp}")
+            else:
+                for match,unknown_name in zip(matches,known_unknown_face_names):
+                    if match:
+                        print(unknown_name)
+        # Draw a box around the face
+        cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+
+        # Draw a label with a name below the face
+        cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+        font = cv2.FONT_HERSHEY_DUPLEX
+        cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
     # Display the resulting image
     cv2.imshow('Video', frame)
