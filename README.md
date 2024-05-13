@@ -8,6 +8,7 @@
 - 4.3完成用例图
 - 4.15完成烟雾检测模块demo
 - 4.22完成人脸检测和验证模块demo
+- 5.12完成烟雾检测后端处理与前端显示demo
 
 ![alt text](pictures/whiteboard_exported_image.png)
 
