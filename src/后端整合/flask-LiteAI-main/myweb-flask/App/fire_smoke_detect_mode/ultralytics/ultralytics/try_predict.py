@@ -2,13 +2,26 @@ from ultralytics import YOLO
 import cv2
 predit_model=YOLO(r'C:\Users\linyiwu\Desktop\software_design\src\后端整合\flask-LiteAI-main\myweb-flask\App\fire_smoke_detect_mode\ultralytics\ultralytics\model_onnx\best_3epoch.pt')
 # predit_model.predict(source=0,save=True)
-
+from PIL import Image
 from flask import Flask, Response
 
 from ultralytics import YOLO
 import cv2
 import base64
 
+##################################
+
+# Run inference
+# results = model('test.jpg') # results list
+# Show the results
+# for r in results:
+    # im_array = r.plot()# plot a BGR numpy array of predictions
+    # im = Image.fromarray(im_array[..., ::-1])# RGB PIL image
+    # im.show()# show image
+    # im.save('results.jpg')# save image
+##################################################################
+
+model=YOLO(r'src\后端整合\flask-LiteAI-main\myweb-flask\App\onnxfile\fire_survellance\best.pt',task='detect')
 def main():
     # 打开摄像头
     cap = cv2.VideoCapture(0)
@@ -32,6 +45,8 @@ def main():
         # 读取一帧图像
         ret, frame = cap.read()
         pred = predit_model(frame)
+
+        print(pred['bbox'])
         # 检查是否成功读取图像
         if not ret:
             print("无法读取图像")
@@ -56,17 +71,29 @@ def main():
 
 def generate_frames():
     cap = cv2.VideoCapture(0)
-    ret, frame = cap.read()
-    if not ret:
-        return None
-    # 进行模型预测等处理
-    pred = predit_model(frame)
-    
-    # 将图像编码为JPEG格式并转换为base64字符串
-    _, buffer = cv2.imencode('.jpg', frame)
-    frame_data = base64.b64encode(buffer).decode('utf-8')
-    
-    return frame_data
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            return None
+        # 进行模型预测等处理
+        pred = predit_model(frame)
+        # bbox = pred['bbox']
+
+        
+        # 将图像编码为JPEG格式并转换为base64字符串
+        _, buffer = cv2.imencode('.jpg', frame)
+        frame_data = base64.b64encode(buffer).decode('utf-8')
+        
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_data.encode() + b'\r\n')
+
+def gen_frames(img):
+    results = model(img)
+    for r in results:
+        im_array = r.plot()# plot a BGR numpy array of predictions
+        im = Image.fromarray(im_array[..., ::-1])# RGB PIL image
+    return im
+
 
 if __name__ == "__main__":
     main()
