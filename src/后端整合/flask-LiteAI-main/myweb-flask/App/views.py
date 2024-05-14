@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, Flask
+from flask import Blueprint, jsonify, request, Flask, send_file, Response
 from .models import *
 from flask_jwt_extended import create_access_token
 import os, base64
@@ -6,10 +6,16 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 from App.lpdr.lpdr import lp_img_preprocess, lp_refer, lp_postprocess, lp_generate_result
 from App.ppocrv3.ppocrv3 import pp_img_preprocess, pp_refer, pp_postprocess, pp_generate_result
-from App.fire_smoke_detect_mode.ultralytics.ultralytics.try_predict import generate_frames
-from flask_socketio import SocketIO, emit
+from App.fire_smoke_detect_mode.ultralytics.ultralytics.try_predict import generate_frames, gen_frames
+from PIL import Image
+from io import BytesIO
+# from flask_socketio import SocketIO, emit
+import cv2
 blue = Blueprint('user', __name__)
-socketio = SocketIO(blue)
+# socketio = SocketIO(blue)
+
+camera = cv2.VideoCapture(0)
+streaming = True
 
 @blue.route('/')
 def test():
@@ -271,13 +277,56 @@ def user_upload():
         })
         return res
 
+# def generate_frames_1():
+#     while True:
+#         data = generate_frames()
+#         # Save the image locally (optional)
+
+def generate_frames_1():
+    global streaming
+    while streaming:
+        success, frame = camera.read()
+        if not success:
+            break
+        else:
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            im = Image.fromarray(frame_rgb)  # 转换为PIL图像
+            processed_frame = gen_frames(im)  # 调用处理函数
+            buffered = BytesIO()
+            processed_frame.save(buffered, format='JPEG')
+            frame = buffered.getvalue()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
 @blue.route('/fire_monitor', methods=['GET'])
 def fire_monitor():
-    while True:
-        data = generate_frames()
-        
-        # 发送图像数据给前端
-        socketio.emit('video_frame', data)
-        
-        # 保存当前帧图像（可选）
-        # cv2.imwrite('current_frame.jpg', frame)
+    # return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(generate_frames_1(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@blue.route('/stop_streaming', methods=['GET'])
+def stop_streaming():
+    global streaming
+    streaming = False
+    camera.release()
+
+@blue.route('/start_streaming')
+def start_stream():
+    global streaming
+    if not streaming:
+        camera.open(0)
+        streaming = True
+    return 'Stream started successfully.'
+
+@blue.route('/api/video_feed', methods=['GET','POST'])
+def video_feed():
+    def generate():
+        global streaming
+        while streaming:
+            # time.sleep(0.0)
+            ret, frame = camera.read()
+            if not ret:
+                break
+            _, jpeg = cv2.imencode('.jpg', frame)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
+    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')

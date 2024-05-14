@@ -1,75 +1,113 @@
-<template>
+<!-- <template>
   <div>
-    <button @click="toggleVideo">{{ watchingVideo ? '退出' : '查看视频' }}</button>
-    <div v-if="watchingVideo">
-      <img :src="videoUrl" ref="imageRef" alt="Video Stream" />
-    </div>
+    <button @click="startVideo">查看视频</button>
+    <button @click="stopVideo">退出</button>
+    <video v-if="showVideo" ref="video" controls autoplay></video>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
-
 export default {
-  name: 'VideoComponent',
   data() {
     return {
-      watchingVideo: false,
-      videoUrl: '', // 后端返回的图片地址
-      intervalId: null, // 用于存储定时器ID
+      showVideo: false,
+      videoSrc: 'http://localhost:5000/fire_monitor',  // 后端接口地址
+      intervalId: null,
     };
   },
   methods: {
-    async toggleVideo() {
-      if (this.watchingVideo) {
-        // 如果正在观看视频，则停止定时请求
-        clearInterval(this.intervalId);
-        this.watchingVideo = false;
-        this.videoUrl = '';
-      } else {
-        // 如果没有观看视频，则开始定时请求
-        this.startVideo();
-      }
+    startVideo() {
+      this.showVideo = true;
+      this.intervalId = setInterval(() => {
+        this.$refs.video.src = this.videoSrc + `?_t=${new Date().getTime()}`;
+      }, 1000);  // 每秒更新一次图片
     },
-    async startVideo() {
-      try {
-        const response = await fetch('http://localhost:5000/fire_monitor', {
-          method: 'GET',
-          // 可能需要包含身份验证标头或其他参数
-        });
-        if (response.ok) {
-          this.watchingVideo = true;
-          this.intervalId = setInterval(this.getVideoFrame, 100); // 每秒获取10帧图片
-        } else {
-          console.error('Failed to start video stream');
-        }
-      } catch (error) {
-        console.error('Error starting video stream:', error);
-      }
+    stopVideo() {
+      this.showVideo = false;
+      clearInterval(this.intervalId);
+      this.$refs.video.src = '';
     },
-    async getVideoFrame() {
-      // try {
-      //   const response = await fetch('http://localhost:5000/fire_monitor', {
-      //     method: 'GET',
-      //     // 可能需要包含身份验证标头或其他参数
-      //   });
-      //   if (response.ok) {
-      //     const imageData = await response.blob();
-      //     this.videoUrl = URL.createObjectURL(imageData); // 使用Blob URL显示图片
-      //   } else {
-      //     console.error('Failed to get video frame');
-      //   }
-      // } catch (error) {
-      //   console.error('Error getting video frame:', error);
-      // }
-      const imageData = await response.blob();
-      this.videoUrl = URL.createObjectURL(imageData); // 使用Blob URL显示图片
-    },
-  },
-  beforeUnmount() {
-    // 组件销毁时清除定时器和释放资源
-    clearInterval(this.intervalId);
-    URL.revokeObjectURL(this.videoUrl);
   },
 };
+</script> -->
+
+
+<!-- <template>
+  <div>
+    <h1>视频监控系统</h1>
+    <img :src="videoSrc" alt="Video Stream">
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      videoSrc: ''
+    };
+  },
+  mounted() {
+    this.startVideoStream();
+  },
+  methods: {
+    startVideoStream() {
+      this.videoSrc = 'http://localhost:5000/fire_monitor';
+    }
+  }
+};
 </script>
+
+<style>
+/* 样式可以根据需求自行调整 */
+</style> -->
+
+
+<template>
+  <div>
+    <h1>视频监控系统</h1>
+    <img :src="videoSrc" alt="Video Stream">
+    <button @click="startVideoStream">开启视频流</button>
+    <button @click="stopVideoStream">停止视频流</button>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      videoSrc: ''
+    };
+  },
+  mounted() {
+    this.startVideoStream();
+  },
+  methods: {
+    startVideoStream() {
+      fetch('http://localhost:5000/start_streaming')
+        .then(response => response.text())
+        .then(data => {
+          console.log(data);  // 打印服务器返回的信息
+          this.videoSrc = 'http://localhost:5000/fire_monitor';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    },
+    stopVideoStream() {
+      fetch('http://localhost:5000/stop_streaming')
+        .then(response => response.text())
+        .then(data => {
+          console.log(data);  // 打印服务器返回的信息
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+  }
+};
+</script>
+
+<style>
+/* 样式可以根据需求自行调整 */
+</style>
+
