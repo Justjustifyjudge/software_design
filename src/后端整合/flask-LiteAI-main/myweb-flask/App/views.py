@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 from App.lpdr.lpdr import lp_img_preprocess, lp_refer, lp_postprocess, lp_generate_result
 from App.ppocrv3.ppocrv3 import pp_img_preprocess, pp_refer, pp_postprocess, pp_generate_result
 from App.fire_smoke_detect_mode.ultralytics.ultralytics.try_predict import generate_frames, gen_frames
+from App.face_recognition_mode.try_4 import loadface
 from PIL import Image
 from io import BytesIO
 # from flask_socketio import SocketIO, emit
@@ -14,9 +15,21 @@ import cv2
 blue = Blueprint('user', __name__)
 # socketio = SocketIO(blue)
 
+# 空列表，用于存储对应的人脸名称 编码
+unknown_face_folder=r"C:\Users\linyiwu\Desktop\datasets\face\unknown"
+# 已知人脸文件夹
+folder_path=r"C:\Users\linyiwu\Desktop\datasets\face\train"
+
 camera = cv2.VideoCapture(0)
 streaming = True
 
+# 人脸识别参数初始化
+known_face_encodings,known_face_names= loadface(folder_path)
+known_unknown_face_encodings,known_unknown_face_names=loadface(unknown_face_folder)
+face_locations = []
+face_encodings = []
+face_names = []
+process_this_frame = True
 @blue.route('/')
 def test():
     return '服务器可用'
@@ -307,14 +320,17 @@ def fire_monitor():
 def stop_streaming():
     global streaming
     streaming = False
-    camera.release()
+    # camera.release()
+    # Debug返回信息
+    return 'Stream stopped successfully.'
 
 @blue.route('/start_streaming')
 def start_stream():
     global streaming
     if not streaming:
-        camera.open(0)
+        # camera.open(0)
         streaming = True
+    # Debug返回信息
     return 'Stream started successfully.'
 
 @blue.route('/api/video_feed', methods=['GET','POST'])
