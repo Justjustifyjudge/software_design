@@ -87,7 +87,8 @@ export default {
         .then(response => response.text())
         .then(data => {
           console.log(data);  // 打印服务器返回的信息
-          this.videoSrc = 'http://localhost:5000/fire_monitor';
+          let randomParam = Math.random();  // 随机参数，防止缓存
+          this.videoSrc = 'http://localhost:5000/fire_monitor?_t=${randomParam}';
         })
         .catch(error => {
           console.error('Error:', error);
@@ -99,6 +100,7 @@ export default {
         .then(data => {
           console.log(data);  // 打印服务器返回的信息
         })
+        .then(this.videoSrc = '')
         .catch(error => {
           console.error('Error:', error);
         });
