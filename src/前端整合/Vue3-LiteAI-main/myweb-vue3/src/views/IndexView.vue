@@ -46,8 +46,8 @@ const HandleFire = () => {
       <div class="container">
         <img src="@/assets/lpdr.jpg" />
         <div class="content">
-          <h5 class="proj">Fire_Smoke_Monitor</h5>
-          <p class="desc">实现烟雾-火焰监控</p>
+          <h5 class="proj">Monitor</h5>
+          <p class="desc">监控查看</p>
           <el-button type="primary" @click="HandleFire">
             <el-icon><IEpPromotion /></el-icon>
             <span>进入</span>
