@@ -21,7 +21,7 @@ import base64
     # im.save('results.jpg')# save image
 ##################################################################
 
-model=YOLO(r'src\后端整合\flask-LiteAI-main\myweb-flask\App\onnxfile\fire_survellance\best.pt',task='detect')
+model=YOLO(r'src\后端整合\flask-LiteAI-main\myweb-flask\App\onnxfile\fire_survellance\best2.pt',task='detect')
 def main():
     # 打开摄像头
     cap = cv2.VideoCapture(0)

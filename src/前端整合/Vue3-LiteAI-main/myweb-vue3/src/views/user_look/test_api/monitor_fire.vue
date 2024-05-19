@@ -65,9 +65,12 @@ export default {
 <template>
   <div>
     <h1>视频监控系统</h1>
-    <img :src="videoSrc" alt="Video Stream">
-    <button @click="startVideoStream">开启视频流</button>
-    <button @click="stopVideoStream">停止视频流</button>
+    <img :src="videoSrc_smoke" alt="Video Stream">
+    <img :src="videoSrc_person" alt="Video Stream">
+    <button @click="startVideoStream_smoke">开启烟雾监控</button>
+    <button @click="stopVideoStream_smoke">停止烟雾监控</button>
+    <button @click="startVideoStream_person">开启陌生人监控</button>
+    <button @click="stopVideoStream_person">停止陌生人监控</button>
   </div>
 </template>
 
@@ -75,32 +78,57 @@ export default {
 export default {
   data() {
     return {
-      videoSrc: ''
+      videoSrc_smoke: '',
+      videoSrc_preson: ''
     };
   },
   mounted() {
-    this.startVideoStream();
+    this.startVideoStream_smoke();
+    this.startVideoStream_person();
   },
   methods: {
-    startVideoStream() {
-      fetch('http://localhost:5000/start_streaming')
+    startVideoStream_smoke() {
+      fetch('http://localhost:5000/start_streaming_smoke')
         .then(response => response.text())
         .then(data => {
           console.log(data);  // 打印服务器返回的信息
           let randomParam = Math.random();  // 随机参数，防止缓存
-          this.videoSrc = 'http://localhost:5000/fire_monitor?_t=${randomParam}';
+          this.videoSrc_smoke = 'http://localhost:5000/fire_monitor?_t=${randomParam}';
         })
         .catch(error => {
           console.error('Error:', error);
         });
     },
-    stopVideoStream() {
-      fetch('http://localhost:5000/stop_streaming')
+    stopVideoStream_smoke() {
+      fetch('http://localhost:5000/stop_streaming_smoke')
         .then(response => response.text())
         .then(data => {
           console.log(data);  // 打印服务器返回的信息
+          this.videoSrc_smoke = '';
         })
-        .then(this.videoSrc = '')
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    },
+    startVideoStream_person() {
+      fetch('http://localhost:5000/start_streaming_person')
+        .then(response => response.text())
+        .then(data => {
+          console.log(data);  // 打印服务器返回的信息
+          let randomParam = Math.random();  // 随机参数，防止缓存
+          this.videoSrc_person = 'http://localhost:5000/person_monitor?_t=${randomParam}';
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    },
+    stopVideoStream_person() {
+      fetch('http://localhost:5000/stop_streaming_person')
+        .then(response => response.text())
+        .then(data => {
+          console.log(data);  // 打印服务器返回的信息
+          this.videoSrc_person = '';
+        })
         .catch(error => {
           console.error('Error:', error);
         });
