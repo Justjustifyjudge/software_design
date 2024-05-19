@@ -14,3 +14,5 @@
 使用git push <远程仓库的地址> <本地仓库的分支名（默认是origin或者main）> 来将内容提交到GitHub之类的远程仓库
 - last.将自己的远程仓库同步到所有人的远程仓库。
 在contribute处选择open pull request，检查各个文件的更改，提交更改。
+
+## Author：林一凡，connect with：202130441139@mail.scut.edu.cn
