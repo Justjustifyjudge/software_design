@@ -14,6 +14,7 @@ import face_recognition
 import numpy as np
 import winsound
 import time
+from App.alarm.alarm import alarm_smoke, recognize_person
 # from flask_socketio import SocketIO, emit
 import cv2
 blue = Blueprint('user', __name__)
@@ -339,7 +340,7 @@ def generate_frames():
             if name == "Unknown":
                 matches = face_recognition.compare_faces(known_unknown_face_encodings, encoding, tolerance=0.5)
                 if not any(matches):
-                    winsound.PlaySound("SystemExit", winsound.SND_ALIAS)
+                    recognize_person()
                     timestamp = int(time.time())
                     filename = os.path.join(unknown_face_folder, f"Unknown_face_{timestamp}.jpg")
                     face = frame[top:bottom, left:right]
@@ -373,7 +374,9 @@ def generate_frames_1():
         else:
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             im = Image.fromarray(frame_rgb)  # 转换为PIL图像
-            processed_frame = gen_frames(im)  # 调用处理函数
+            processed_frame, posibility = gen_frames(im)  # 调用处理函数
+            if posibility > 0.85:
+                alarm_smoke()
             buffered = BytesIO()
             processed_frame.save(buffered, format='JPEG')
             frame = buffered.getvalue()
@@ -382,7 +385,6 @@ def generate_frames_1():
 
 @blue.route('/fire_monitor', methods=['GET'])
 def fire_monitor():
-    # return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
     return Response(generate_frames_1(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @blue.route('/stop_streaming_smoke', methods=['GET'])
@@ -398,7 +400,7 @@ def start_stream_smoke():
     global streaming_smoke
     if not streaming_smoke:
         # camera.open(0)
-        streaming = True
+        streaming_smoke = True
     # Debug返回信息
     return 'Stream started successfully.'
 
