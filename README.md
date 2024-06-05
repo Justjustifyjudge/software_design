@@ -10,6 +10,8 @@
 - 4.22完成人脸检测和验证模块demo
 - 5.12完成烟雾检测后端处理与前端显示demo
 - 5.19完成显示刷新
+- 6.5完成完成人脸识别的显示和暂停demo
+- 6.5完成报警模块（待测试）
 
 ![alt text](pictures/whiteboard_exported_image.png)
 
