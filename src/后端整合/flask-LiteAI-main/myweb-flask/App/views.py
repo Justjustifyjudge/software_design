@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request, Flask, send_file, Response
+from flask import Blueprint, jsonify, request, Flask, send_file, Response, send_from_directory, abort
 from .models import *
 from flask_jwt_extended import create_access_token
 import os, base64
@@ -375,7 +375,7 @@ def generate_frames_1():
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             im = Image.fromarray(frame_rgb)  # 转换为PIL图像
             processed_frame, posibility = gen_frames(im)  # 调用处理函数
-            if posibility > 0.85:
+            if posibility > 0.95:
                 alarm_smoke()
             buffered = BytesIO()
             processed_frame.save(buffered, format='JPEG')
@@ -422,3 +422,36 @@ def start_stream_person():
     if not streaming:
         streaming = True
     return 'Stream started successfully.'
+
+#########
+# 2024年6月11日15:23:38
+# 陌生人脸管理相关
+image_folder = r'C:\Users\linyiwu\Desktop\datasets\face\unknown'
+@blue.route('/api/images', methods=['GET'])
+def get_images():
+    try:
+        files = os.listdir(image_folder)
+        images = [file for file in files if file.lower().endswith(('png', 'jpg', 'jpeg', 'gif'))]
+        return jsonify(images)
+    except Exception as e:
+        return str(e), 500
+
+@blue.route('/api/image/unknown/<filename>', methods=['GET'])
+def get_image(filename):
+    return send_from_directory(image_folder, filename)
+
+@blue.route('/api/images/<filename>', methods=['DELETE'])
+def delete_image(filename):
+    try:
+        file_path = os.path.join(image_folder, filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return '', 204
+        else:
+            return abort(404)
+    except Exception as e:
+        return str(e), 500
+
+@blue.route('/images/<filename>')
+def serve_image(filename):
+    return send_from_directory(image_folder, filename)
