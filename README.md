@@ -12,6 +12,7 @@
 - 5.19完成显示刷新
 - 6.5完成完成人脸识别的显示和暂停demo
 - 6.5完成报警模块（待测试）
+- 6.11完成界面美化、陌生人脸删除
 
 ![alt text](pictures/whiteboard_exported_image.png)
 
