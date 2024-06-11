@@ -89,6 +89,7 @@ def generate_frames():
 
 def gen_frames(img):
     results = model(img)
+    config = 0
     for r in results:
         im_array = r.plot()# plot a BGR numpy array of predictions
         boxes = r.boxes
