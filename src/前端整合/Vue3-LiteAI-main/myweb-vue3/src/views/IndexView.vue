@@ -16,7 +16,7 @@ const HandleFire = () => {
 
 <template>
   <el-row>
-    <el-col :md="4" :offset="1">
+    <!-- <el-col :md="4" :offset="1">
       <div class="container">
         <img src="@/assets/ocr.jpg" />
         <div class="content">
@@ -41,7 +41,7 @@ const HandleFire = () => {
           </el-button>
         </div>
       </div>
-    </el-col>
+    </el-col> -->
     <el-col :md="4" :offset="1">
       <div class="container">
         <img src="@/assets/lpdr.jpg" />
