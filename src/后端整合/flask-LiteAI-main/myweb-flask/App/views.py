@@ -375,7 +375,7 @@ def generate_frames_1():
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             im = Image.fromarray(frame_rgb)  # 转换为PIL图像
             processed_frame, posibility = gen_frames(im)  # 调用处理函数
-            if posibility > 0.85:
+            if posibility > 0.95:
                 alarm_smoke()
             buffered = BytesIO()
             processed_frame.save(buffered, format='JPEG')

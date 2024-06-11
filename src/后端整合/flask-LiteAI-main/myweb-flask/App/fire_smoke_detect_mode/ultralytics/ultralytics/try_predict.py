@@ -92,9 +92,11 @@ def gen_frames(img):
     for r in results:
         im_array = r.plot()# plot a BGR numpy array of predictions
         boxes = r.boxes
-        box=boxes[0]
+        # box=boxes[0].conf
+        for box in boxes:
+            config = box.conf
         im = Image.fromarray(im_array[..., ::-1])# RGB PIL image
-    return im, box
+    return im, config
 
 
 if __name__ == "__main__":
