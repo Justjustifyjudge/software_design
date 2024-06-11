@@ -455,3 +455,57 @@ def delete_image(filename):
 @blue.route('/images/<filename>')
 def serve_image(filename):
     return send_from_directory(image_folder, filename)
+
+#################
+# 家庭成员管理相关
+# 2024年6月11日16:13:46
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+family_image_folder = r'C:\Users\linyiwu\Desktop\datasets\face\train'
+@blue.route('/upload', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(family_image_folder, filename))
+        return jsonify({'message': 'File uploaded successfully'}), 200
+    else:
+        return jsonify({'error': 'File type not allowed'}), 400
+
+@blue.route('/api/family_images', methods=['GET'])
+def get_family_images():
+    try:
+        files = os.listdir(family_image_folder)
+        images = [file for file in files if file.lower().endswith(('png', 'jpg', 'jpeg', 'gif'))]
+        return jsonify(images)
+    except Exception as e:
+        return str(e), 500
+
+@blue.route('/api/image/family/<filename>', methods=['GET'])
+def get_family_image(filename):
+    return send_from_directory(family_image_folder, filename)
+
+@blue.route('/api/images/<filename>', methods=['DELETE'])
+def delete_family_image(filename):
+    try:
+        file_path = os.path.join(family_image_folder, filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            return '', 204
+        else:
+            return abort(404)
+    except Exception as e:
+        return str(e), 500
+
+@blue.route('/family_images/<filename>')
+def serve_family_image(filename):
+    return send_from_directory(family_image_folder, filename)
