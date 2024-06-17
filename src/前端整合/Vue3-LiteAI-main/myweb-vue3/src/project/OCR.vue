@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import type { UploadFile, UploadInstance, UploadProps } from 'element-plus'
 import { b64toBlob } from '@/components/layout/Blob_convter'
 
@@ -127,5 +127,222 @@ const submitUpload = () => {
   display: flex;
   border: 1px dashed var(--el-border-color);
   overflow-y: auto;
+}
+</style> -->
+
+
+<!-- <template>
+  <div class="image-manager">
+    <h1>陌生人脸管理</h1>
+    <div class="image-list">
+      <div v-for="image in images" :key="image" class="image-item">
+        <img :src="`/images/${image}`" :alt="image" class="image">
+        <button @click="deleteImage(image)" class="btn delete">删除</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      images: []
+    };
+  },
+  created() {
+    this.fetchImages();
+  },
+  methods: {
+    fetchImages() {
+      fetch('http://localhost:5000/api/images')
+        .then(response => response.json())
+        .then(data => {
+          this.images = data;
+        })
+        .catch(error => {
+          console.error('Error fetching images:', error);
+        });
+    },
+    deleteImage(image) {
+      if (confirm(`确定要删除该图片吗？`)) {
+        fetch(`http://localhost:5000/api/images/${image}`, {
+          method: 'DELETE'
+        })
+        .then(response => {
+          if (response.ok) {
+            this.images = this.images.filter(img => img !== image);
+          } else {
+            console.error('Error deleting image:', response.statusText);
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting image:', error);
+        });
+      }
+    }
+  }
+};
+</script>
+
+<style>
+.image-manager {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.image-item {
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+.image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 10px;
+}
+
+.btn {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin-top: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #e53935;
+  transform: scale(1.05);
+}
+</style> -->
+
+
+<template>
+  <div class="image-manager">
+    <h1>陌生人脸管理</h1>
+    <div class="image-list">
+      <div v-for="image in images" :key="image" class="image-item">
+        <img :src="image" :alt="image" class="image">
+        <button @click="deleteImage(image)" class="btn delete">删除</button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      images: []
+    };
+  },
+  created() {
+    this.fetchImages();
+  },
+  methods: {
+    fetchImages() {
+      fetch('http://localhost:5000/api/images')
+        .then(response => response.json())
+        .then(data => {
+          // 将文件名转换为完整的图片路径
+          this.images = data.map(image => `http://localhost:5000/api/image/unknown/${image}`);
+        })
+        .catch(error => {
+          console.error('Error fetching images:', error);
+        });
+    },
+    deleteImage(image) {
+      if (confirm(`确定要删除该图片吗？`)) {
+        // 从路径中提取图片名
+        const imageName = image.split('/').pop();
+        fetch(`http://localhost:5000/api/images/${imageName}`, {
+          method: 'DELETE'
+        })
+        .then(response => {
+          if (response.ok) {
+            this.images = this.images.filter(img => img !== image);
+          } else {
+            console.error('Error deleting image:', response.statusText);
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting image:', error);
+        });
+      }
+    }
+  }
+};
+</script>
+
+<style>
+.image-manager {
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.image-item {
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+.image {
+  max-width: 200px;
+  max-height: 200px;
+  border-radius: 10px;
+}
+
+.btn {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  margin-top: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #e53935;
+  transform: scale(1.05);
 }
 </style>
