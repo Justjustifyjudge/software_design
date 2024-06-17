@@ -7,10 +7,10 @@ import winsound
 
 
 video_capture = cv2.VideoCapture(0)
-# 空列表，用于存储对应的人脸名称 编码
-unknown_face_folder=r"C:\Users\linyiwu\Desktop\datasets\face\unknown"
 # 已知人脸文件夹
-folder_path=r"C:\Users\linyiwu\Desktop\datasets\face\train"
+known_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'known_faces')
+# 未知人脸文件夹
+unknown_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'unknown_faces')
 
 
 def loadface(path):
@@ -41,8 +41,8 @@ def loadface(path):
 
 
 # Initialize some variables
-known_face_encodings,known_face_names= loadface(folder_path)
-known_unknown_face_encodings,known_unknown_face_names=loadface(unknown_face_folder)
+known_face_encodings,known_face_names= loadface(known_faces_dir)
+known_unknown_face_encodings,known_unknown_face_names=loadface(unknown_faces_dir)
 face_locations = []
 face_encodings = []
 face_names = []
@@ -107,7 +107,7 @@ while True:
                 print("new unknower")
                 # 如果没有找到匹配项，保存这个新的人脸
                 timestamp = int(time.time())  # 使用当前时间戳作为文件名
-                filename = os.path.join(unknown_face_folder, f"Unknown_face_{timestamp}.jpg")
+                filename = os.path.join(unknown_faces_dir, f"Unknown_face_{timestamp}.jpg")
                 face = frame[top:bottom, left:right]
                 # 保存未知人脸的图像
                 cv2.imwrite(filename, face)

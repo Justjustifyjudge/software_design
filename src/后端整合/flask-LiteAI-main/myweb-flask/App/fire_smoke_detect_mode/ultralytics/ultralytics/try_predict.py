@@ -1,6 +1,12 @@
+import os
+
 from ultralytics import YOLO
 import cv2
-predit_model=YOLO(r'C:\Users\linyiwu\Desktop\software_design\src\后端整合\flask-LiteAI-main\myweb-flask\App\fire_smoke_detect_mode\ultralytics\ultralytics\model_onnx\best_3epoch.pt')
+current_path = os.getcwd()
+model_path = os.path.join(current_path, 'App', 'fire_smoke_detect_mode', 'ultralytics', 'ultralytics', 'model_onnx', 'best_3epoch.pt')
+predit_model=YOLO(model_path)
+# predit_model=YOLO(r'C:\Users\linyiwu\Desktop\software_design\src\后端整合\flask-LiteAI-main\myweb-flask\App\fire_smoke_detect_mode\ultralytics\ultralytics\model_onnx\best_3epoch.pt')
+
 # predit_model.predict(source=0,save=True)
 from PIL import Image
 from flask import Flask, Response
