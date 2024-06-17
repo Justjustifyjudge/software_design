@@ -15,13 +15,13 @@ cap.set(4, 480)  # 高度
 
 # 设置用于比对的人脸图像文件夹路径
 base_folder = r'C:\Users\linyiwu\Desktop\datasets\face\train'
-img2_pathe = f"{base_folder}\0001.jpg"
+img2_pathe = r"C:\Users\linyiwu\Desktop\datasets\face\train\0001.jpg"
 
 while True:
     ret, frame = cap.read()
 
     # 保存摄像头捕捉的图像到临时文件
-    temp_face_path = f"{base_folder}/temp_face.jpg"
+    temp_face_path = r"C:\Users\linyiwu\Desktop\datasets\face\train\temp_face.jpg"
     cv2.imwrite(temp_face_path, frame)
 
     # 调用DeepFace进行人脸验证
@@ -29,7 +29,7 @@ while True:
         # result = DeepFace.verify(img1_path=temp_face_path, img2_path=img2_path, model_name='GhostFaceNet', enforce_detection=False)
         # Debug
         # result = DeepFace.verify(img1_path=img2_pathe, img2_path=img2_pathe, model_name='DeepFace', enforce_detection=False)
-        result = DeepFace.verify(img1_path=temp_face_path, img2_path=img2_pathe)
+        result = DeepFace.verify(img1_path=r'C:\Users\linyiwu\Desktop\datasets\face\train\temp_face.jpg', img2_path=r"C:\Users\linyiwu\Desktop\datasets\face\train\0001.jpg")
 
         # 提取验证结果
         verified = result['verified']
@@ -60,12 +60,12 @@ cv2.destroyAllWindows()
 # import matplotlib.pyplot as plt
 # import cv2
 
-# result = DeepFace.verify(img1_path=r"C:\Users\linyiwu\Desktop\datasets\face\train\0002.jpg",
+# result = DeepFace.verify(img1_path=r"C:\Users\linyiwu\Desktop\datasets\face\train\0001.jpg",
 #                           img2_path=r"C:\Users\linyiwu\Desktop\datasets\face\train\0001.jpg",
 #                           model_name='VGG-Face')
 
 # fig, axs = plt.subplots(1, 2, figsize=(10, 5))
-# axs[0].imshow(plt.imread(r"C:\Users\linyiwu\Desktop\datasets\face\train\0002.jpg"))
+# axs[0].imshow(plt.imread(r"C:\Users\linyiwu\Desktop\datasets\face\train\0001.jpg"))
 # axs[1].imshow(plt.imread(r"C:\Users\linyiwu\Desktop\datasets\face\train\0001.jpg"))
 # fig.suptitle(f"Verified: {result['verified']} - distance: {result['distance']:0.4}")
 # plt.show()
