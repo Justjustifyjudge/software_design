@@ -6,10 +6,10 @@ import time
 import winsound
 
 video_capture = cv2.VideoCapture(0)
-# 空列表，用于存储对应的人脸名称 编码
-unknown_face_folder=r"C:\Users\linyiwu\Desktop\datasets\face\unknown"
 # 已知人脸文件夹
-folder_path=r"C:\Users\linyiwu\Desktop\datasets\face\train"
+known_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'known_faces')
+# 未知人脸文件夹
+unknown_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'unknown_faces')
 
 
 def loadface(path):
@@ -37,6 +37,7 @@ def loadface(path):
                 name = os.path.splitext(filename)[0]
                 names.append(name)
     return (encodings,names)
+
 
 
 # # Initialize some variables

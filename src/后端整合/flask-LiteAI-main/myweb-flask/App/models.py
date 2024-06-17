@@ -11,7 +11,7 @@ class User(db.Model):
     resources = db.relationship('Resource', backref='user', lazy=True)
 
     def __repr__(self):
-        return str([self.id, self.identity,self.username, self.password, self.access_token])
+        return str([self.id, self.identity, self.username, self.password, self.access_token])
 
 
 class Resource(db.Model):
