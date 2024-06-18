@@ -2,6 +2,8 @@ import threading
 import winsound
 from pydub import AudioSegment
 from pydub.playback import play
+import os
+import simpleaudio as sa
 """
 Author: 林一凡
 Time: 2024年6月5日15:55:09
@@ -36,5 +38,12 @@ def alarm_smoke():
     beep_thread.start()
 
 def recognize_person():
-    sound_thread = threading.Thread(target=play_sound_acc, args=(r'C:\Users\linyiwu\Desktop\software_design_develop\src\后端整合\flask-LiteAI-main\myweb-flask\App\alarm\陌生人脸.aac',))
+    sound_thread = threading.Thread(target=beep_sound, args=(1000, 500))
     sound_thread.start()
+
+# Debug
+if __name__ == '__main__':
+    alarm_smoke()
+    recognize_person()
+    # audio = AudioSegment.from_file(r"C:\Users\linyiwu\Desktop\stranger.aac", format="aac")
+    # audio.export(r"C:\Users\linyiwu\Desktop\stranger.wav", format="wav")
