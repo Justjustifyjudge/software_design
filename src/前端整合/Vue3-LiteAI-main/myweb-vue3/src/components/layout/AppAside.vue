@@ -38,7 +38,7 @@ import { isCollapse } from './isCollapse'
         <el-menu-item index="/user_menu">
           <el-icon>
             <IEpLock />
-          </el-icon> <span> 用户管理 </span>
+          </el-icon> <span> 家庭成员账户管理 </span>
         </el-menu-item>
         <el-sub-menu index="1">
           <template #title>

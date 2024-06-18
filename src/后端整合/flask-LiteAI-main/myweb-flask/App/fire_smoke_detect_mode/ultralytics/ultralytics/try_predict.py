@@ -3,7 +3,7 @@ import os
 from ultralytics import YOLO
 import cv2
 current_path = os.getcwd()
-model_path = os.path.join(current_path, 'App', 'fire_smoke_detect_mode', 'ultralytics', 'ultralytics', 'model_onnx', 'best_3epoch.pt')
+model_path = os.path.join(current_path, 'src','后端整合','flask-LiteAI-main','myweb-flask', 'App', 'fire_smoke_detect_mode', 'ultralytics', 'ultralytics', 'model_onnx', 'best_3epoch.pt')
 predit_model=YOLO(model_path)
 # predit_model=YOLO(r'C:\Users\linyiwu\Desktop\software_design\src\后端整合\flask-LiteAI-main\myweb-flask\App\fire_smoke_detect_mode\ultralytics\ultralytics\model_onnx\best_3epoch.pt')
 
@@ -75,6 +75,10 @@ def main():
     # 关闭所有打开的窗口
     cv2.destroyAllWindows()
 
+"""
+Linyifan
+煙霧火焰檢測生成圖片
+"""
 def generate_frames():
     cap = cv2.VideoCapture(0)
     while True:

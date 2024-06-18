@@ -7,9 +7,9 @@ import winsound
 
 video_capture = cv2.VideoCapture(0)
 # 已知人脸文件夹
-known_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'known_faces')
+known_faces_dir = os.path.join(os.getcwd(), 'src','后端整合','flask-LiteAI-main','myweb-flask','App', 'faces_db', 'known_faces')
 # 未知人脸文件夹
-unknown_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'unknown_faces')
+unknown_faces_dir = os.path.join(os.getcwd(),'src','后端整合','flask-LiteAI-main','myweb-flask', 'App', 'faces_db', 'unknown_faces')
 
 
 def loadface(path):
@@ -19,6 +19,25 @@ def loadface(path):
     for filename in os.listdir(path):
         # 检查是否是jpg格式的图片文件
         if filename.lower().endswith(".jpg"):
+            # 构造完整的文件路径
+            image_path = os.path.join(path, filename)
+
+            # 加载图片
+            image = face_recognition.load_image_file(image_path)
+
+            # 获取图片中所有人脸的编码
+            encoding = face_recognition.face_encodings(image)
+
+            # 确保图片中有人脸
+            if encoding:
+                # 将第一个（也是唯一的）人脸编码添加到列表中
+                encodings.append(encoding[0])
+
+                # 从文件名中获取人脸名称，去掉".jpg"
+                name = os.path.splitext(filename)[0]
+                names.append(name)
+        # 检查是否是png格式的图片文件
+        if filename.lower().endswith(".png"):
             # 构造完整的文件路径
             image_path = os.path.join(path, filename)
 

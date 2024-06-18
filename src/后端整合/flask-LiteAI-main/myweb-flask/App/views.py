@@ -8,8 +8,8 @@ from werkzeug.utils import secure_filename
 from App.lpdr.lpdr import lp_img_preprocess, lp_refer, lp_postprocess, lp_generate_result
 from App.ppocrv3.ppocrv3 import pp_img_preprocess, pp_refer, pp_postprocess, pp_generate_result
 from App.utils import checkface
-# from App.fire_smoke_detect_mode.ultralytics.ultralytics.try_predict import generate_frames, gen_frames
-# from App.face_recognition_mode.try_4 import loadface
+from App.fire_smoke_detect_mode.ultralytics.ultralytics.try_predict import generate_frames, gen_frames
+from App.face_recognition_mode.try_4 import loadface
 from PIL import Image
 from io import BytesIO
 import face_recognition
@@ -24,13 +24,32 @@ blue = Blueprint('user', __name__)
 # socketio = SocketIO(blue)
 
 # 已知人脸文件夹
-known_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'known_faces')
+known_faces_dir = os.path.join(os.getcwd(),'src','后端整合','flask-LiteAI-main','myweb-flask' , 'App', 'faces_db', 'known_faces')
 # 未知人脸文件夹
-unknown_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'unknown_faces')
+unknown_faces_dir = os.path.join(os.getcwd(), 'src','后端整合','flask-LiteAI-main','myweb-flask' ,'App', 'faces_db', 'unknown_faces')
+# 暂存人脸文件夹
+temp_faces_dir = os.path.join(os.getcwd(),'src','后端整合','flask-LiteAI-main','myweb-flask' ,'App', 'faces_db', 'temp_faces')
 
-camera = cv2.VideoCapture(0)
-streaming_smoke = True
-streaming = True
+# 空列表，用于存储对应的人脸名称 编码
+unknown_face_folder=unknown_faces_dir
+# 已知人脸文件夹
+folder_path=known_faces_dir
+
+# camera = cv2.VideoCapture(0)
+camera = None
+camera_open = False
+streaming_smoke = False
+streaming = False
+
+# 人脸识别参数初始化
+known_face_encodings,known_face_names= loadface(folder_path)
+known_unknown_face_encodings,known_unknown_face_names=loadface(unknown_face_folder)
+face_locations = []
+face_encodings = []
+face_names = []
+# camera = cv2.VideoCapture(0)
+# streaming_smoke = True
+# streaming = True
 
 # # 人脸识别参数初始化
 # known_face_encodings,known_face_names = loadface(known_faces_dir)
@@ -38,7 +57,7 @@ streaming = True
 # face_locations = []
 # face_encodings = []
 # face_names = []
-# process_this_frame = True
+process_this_frame = True
 
 
 @blue.route('/')
@@ -116,7 +135,7 @@ def user_login():
             img_data = open(os.path.join(known_faces_dir, img_filename), "rb").read()
             img_data = base64.b64encode(img_data).decode('utf-8')
         else:
-            img_data = open(os.path.join(known_faces_dir, '101.png'), "rb").read()
+            img_data = open(os.path.join(temp_faces_dir, '101.png'), "rb").read()
             img_data = base64.b64encode(img_data).decode('utf-8')
         res = jsonify({
             "success": True,
@@ -304,7 +323,7 @@ def user_get_face(id):
                 'time': now_time
             })
             return res
-    img_data = open(os.path.join(known_faces_dir, '101.png'), "rb").read()
+    img_data = open(os.path.join(temp_faces_dir, '101.png'), "rb").read()
     img_data = base64.b64encode(img_data).decode('utf-8')
     res = jsonify({
         'code': '111111',
@@ -417,6 +436,76 @@ def user_upload():
 #         # Save the image locally (optional)
 
 
+# def generate_frames():
+#     global streaming, process_this_frame
+#     while streaming:
+#         success, frame = camera.read()
+#         if not success:
+#             break
+
+#         if process_this_frame:
+#             # Resize frame of video to 1/4 size for faster face recognition processing
+#             small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+#             rgb_small_frame = np.ascontiguousarray(small_frame[:, :, ::-1])
+
+#             # Find all the faces and face encodings in the current frame of video
+#             face_locations = face_recognition.face_locations(rgb_small_frame, model="hog")
+#             face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+#             face_names = []
+#             for face_encoding in face_encodings:
+#                 matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=0.5)
+#                 name = "Unknown"
+
+#                 face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+
+#                 # if len(face_distances) == 0:
+#                 #     continue
+
+#                 best_match_index = np.argmin(face_distances)
+                
+#                 if matches[best_match_index]:
+#                     name = known_face_names[best_match_index]
+
+#                 face_names.append(name)
+
+#         process_this_frame = not process_this_frame
+
+#         # Display the results
+#         for (top, right, bottom, left), name, encoding in zip(face_locations, face_names, face_encodings):
+#             top *= 4
+#             right *= 4
+#             bottom *= 4
+#             left *= 4
+
+#             if name == "Unknown":
+#                 matches = face_recognition.compare_faces(known_unknown_face_encodings, encoding, tolerance=0.5)
+#                 if not any(matches):
+#                     recognize_person()
+#                     timestamp = int(time.time())
+#                     filename = os.path.join(unknown_face_folder, f"Unknown_face_{timestamp}.jpg")
+#                     face = frame[top:bottom, left:right]
+#                     cv2.imwrite(filename, face)
+#                     known_unknown_face_encodings.append(encoding)
+#                     known_unknown_face_names.append(f"Unknown_face_{timestamp}")
+#                 else:
+#                     for match, unknown_name in zip(matches, known_unknown_face_names):
+#                         if match:
+#                             print(unknown_name)
+
+#             cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+#             cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0, 255), cv2.FILLED)
+#             font = cv2.FONT_HERSHEY_DUPLEX
+#             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+#         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+#         im = Image.fromarray(frame_rgb)
+#         buffered = BytesIO()
+#         im.save(buffered, format='JPEG')
+#         frame = buffered.getvalue()
+#         yield (b'--frame\r\n'
+#                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+
 def generate_frames():
     global streaming, process_this_frame
     while streaming:
@@ -505,9 +594,12 @@ def fire_monitor():
 
 @blue.route('/stop_streaming_smoke', methods=['GET'])
 def stop_streaming_smoke():
-    global streaming_smoke
+    global streaming_smoke,camera_open,camera
     streaming_smoke = False
     # camera.release()
+    if not streaming:
+        camera.release()
+        camera_open=False
     # Debug返回信息
     return 'Stream stopped successfully.'
 
@@ -518,19 +610,26 @@ def start_stream_smoke():
     if not streaming_smoke:
         # camera.open(0)
         streaming_smoke = True
+    global camera_open, camera
+    if not camera_open:
+        camera = cv2.VideoCapture(0)
+        camera_open=True
     # Debug返回信息
     return 'Stream started successfully.'
 
 
 ####################
-# @blue.route('/person_monitor', methods=['GET'])
-# def person_monitor():
-#     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+@blue.route('/person_monitor', methods=['GET'])
+def person_monitor():
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @blue.route('/stop_streaming_person', methods=['GET'])
 def stop_streaming_person():
-    global streaming
+    global streaming,camera,camera_open
     streaming = False
+    if not streaming_smoke:
+        camera.release()
+        camera_open=False
     return 'Stream stopped successfully.'
 
 
@@ -539,12 +638,16 @@ def start_stream_person():
     global streaming
     if not streaming:
         streaming = True
+    global camera_open, camera
+    if not camera_open:
+        camera = cv2.VideoCapture(0)
+        camera_open=True
     return 'Stream started successfully.'
 
 #########
 # 2024年6月11日15:23:38
 # 陌生人脸管理相关
-image_folder = r'C:\Users\linyiwu\Desktop\datasets\face\unknown'
+image_folder = unknown_faces_dir
 @blue.route('/api/images', methods=['GET'])
 def get_images():
     try:
@@ -581,7 +684,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-family_image_folder = r'C:\Users\linyiwu\Desktop\datasets\face\train'
+family_image_folder = known_faces_dir
 @blue.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:

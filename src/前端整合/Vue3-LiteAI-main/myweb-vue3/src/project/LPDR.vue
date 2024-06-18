@@ -269,7 +269,7 @@ export default {
 };
 </script> -->
 
-<template>
+<!-- <template>
   <div class="image-manager">
     <h1>家庭成员管理</h1>
     <div class="image-list">
@@ -361,7 +361,7 @@ export default {
     }
   }
 };
-</script>
+</script> -->
 
 <style>
 .image-manager {

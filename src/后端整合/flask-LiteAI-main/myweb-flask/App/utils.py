@@ -5,8 +5,8 @@ import face_recognition
 from PIL import Image
 
 current_path = os.getcwd()
-test_folder_path = os.path.join(current_path, 'App', 'test_img')
-known_faces_dir = os.path.join(os.getcwd(), 'App', 'faces_db', 'known_faces')
+test_folder_path = os.path.join(current_path,'src','后端整合','flask-LiteAI-main','myweb-flask', 'App', 'test_img')
+known_faces_dir = os.path.join(os.getcwd(),'src','后端整合','flask-LiteAI-main','myweb-flask', 'App', 'faces_db', 'known_faces')
 
 
 def loadface(path):

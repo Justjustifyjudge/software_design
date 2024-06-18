@@ -83,7 +83,7 @@ const onSubmit = async () => {
     if (store.token.identity == '超级管理员') {
         router.push('/')
     } else {
-        router.push('/user_look')
+        router.push('/')
     }
 }
 
