@@ -1,13 +1,38 @@
-<!-- <script setup lang="ts">
-import type { UploadFile, UploadInstance, UploadProps } from 'element-plus'
+<script setup lang="ts">
+import type { FormInstance, FormRules, UploadFile, UploadInstance, UploadProps } from 'element-plus'
+
 import { b64toBlob } from '@/components/layout/Blob_convter'
+import { addUser } from '@/api/users'
 
 const imageUrl = ref('')
 const img_infer = ref('')
 const rec_result = ref('')
+const isLoading = ref(false)
+const form = reactive({
+  username: '',
+  password: '',
+  base64str: '',
+  identity: false
+})
+
+const convertToBase64 = async () => {
+  try {
+    const response = await fetch(imageUrl.value);
+    const blob = await response.blob();
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      form.base64str = e.target.result;
+      form.base64str = form.base64str.replace(/\+/g, "%2B");
+    };
+    reader.readAsDataURL(blob);
+  } catch (error: any) {
+    ElMessage.error('图片加载失败：' + error.message);
+  }
+}
 
 const justSelect = (uploadFile: UploadFile) => {
   imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+  convertToBase64();
 }
 
 const handleSuccess = (response: any) => {
@@ -26,57 +51,67 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   }
   return true
 }
-const uploadRef = ref<UploadInstance>()
 
-const submitUpload = () => {
-  uploadRef.value!.submit()
+const onSubmit = async () => {
+  isLoading.value = true
+  await formRef.value?.validate().catch((err: any) => {
+    ElMessage.error('表单校验失败...')
+    isLoading.value = false
+    throw err
+  })
+  const data = await addUser(form).then((res) => {
+    if (!res.data.success) {
+      ElMessage.error(res.data.message)
+      isLoading.value = false
+      throw new Error(res.data.message)
+    }
+    return res.data
+  })
+  isLoading.value = false
+  ElMessage.success('注册成功!')
 }
+
+const uploadRef = ref<UploadInstance>()
+const formRef = ref<FormInstance>()
+const rules = reactive<FormRules>({
+  username: [
+    { required: true, message: '用户名不能为空', trigger: 'blur' },
+    { min: 2, max: 20, message: '用户名长度需要2~20位', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '密码不能为空', trigger: 'blur' },
+    { min: 6, max: 18, message: '密码长度需要6~18位', trigger: 'blur' }
+  ]
+})
 </script>
 
 <template>
   <el-card>
     <template #header>
-      <h3>《车牌定位与识别》算法部署平台</h3>
+      <h3>添加家庭成员</h3>
     </template>
-    <el-row>
-      <el-col :md="24">
-        <div style="height: 100px"></div>
-      </el-col>
-      <el-col :md="6" :offset="1">
-        <el-upload
-          ref="uploadRef"
-          class="avatar-uploader"
-          action="/users/upload/"
-          :show-file-list="false"
-          :on-change="justSelect"
-          :before-upload="beforeAvatarUpload"
-          drag
-          :data="{ data: 'lpdr' }"
-          :auto-upload="false"
-          :on-success="handleSuccess"
-        >
+    <el-form :model="form" :rules="rules" ref="formRef" label-width="auto" style="max-width: 600px">
+      <el-form-item label="用户名">
+        <el-input v-model="form.username" placeholder="请输入用户名" />
+      </el-form-item>
+      <el-form-item label="密码">
+        <el-input v-model="form.password" clearable placeholder="请输入密码" show-password></el-input>
+      </el-form-item>
+      <el-form-item label="是否为管理员">
+        <el-switch v-model="form.identity" />
+      </el-form-item>
+      <el-form-item label="上传人脸">
+        <el-upload ref="uploadRef" class="avatar-uploader" action="/users/upload/" :show-file-list="false"
+          :on-change="justSelect" :before-upload="beforeAvatarUpload" drag :data="{ data: 'lpdr' }" :auto-upload="false"
+          :on-success="handleSuccess">
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
-          <el-icon v-else class="el-icon--upload" size="80"><IEpupload-filled /></el-icon>
+          <el-icon v-else class="el-icon--upload" size="50"><IEpupload-filled /></el-icon>
         </el-upload>
-        <el-button class="ml-3" type="success" @click="submitUpload"> 上传 </el-button>
-      </el-col>
-      <el-col :md="6" :offset="1">
-        <div class="result-demo">
-          <img v-if="img_infer" :src="img_infer" />
-          <div v-else></div>
-        </div>
-      </el-col>
-      <el-col :md="6" :offset="2">
-        <div class="rec_res">
-          <div>
-            <p v-for="item of rec_result" :key="item">{{ item }}</p>
-          </div>
-        </div>
-      </el-col>
-      <el-col :md="24">
-        <div style="height: 300px"></div>
-      </el-col>
-    </el-row>
+      </el-form-item>
+      <el-form-item label=" ">
+        <el-button type="primary" @click="onSubmit" :loading="isLoading">创建</el-button>
+      </el-form-item>
+    </el-form>
   </el-card>
 </template>
 
@@ -86,6 +121,7 @@ const submitUpload = () => {
   height: 350px;
   object-fit: contain;
 }
+
 .avatar-uploader img {
   justify-content: center;
   align-items: center;
@@ -109,8 +145,10 @@ const submitUpload = () => {
 .el-icon.el-icon--upload {
   font-size: 28px;
   color: #8c939d;
-  height: 320px;
+  height: 50px;
+  width: 100px;
   text-align: center;
+  justify-content: center;
 }
 
 .result-demo {
@@ -121,12 +159,14 @@ const submitUpload = () => {
   justify-content: center;
   align-items: center;
 }
+
 .result-demo img {
   width: 95%;
   height: 80%;
   display: block;
   object-fit: contain;
 }
+
 .rec_res {
   width: 410px;
   height: 434px;
@@ -229,7 +269,7 @@ export default {
 };
 </script> -->
 
-<template>
+<!-- <template>
   <div class="image-manager">
     <h1>家庭成员管理</h1>
     <div class="image-list">
@@ -321,7 +361,7 @@ export default {
     }
   }
 };
-</script>
+</script> -->
 
 <style>
 .image-manager {
