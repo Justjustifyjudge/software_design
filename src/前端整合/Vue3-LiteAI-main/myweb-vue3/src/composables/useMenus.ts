@@ -20,9 +20,9 @@ export function useMenus() {
       cancelButtonText: '取消'
     }).catch(() => {
       ElMessage.info('删除操作被取消!')
-      return new Promise(() => { })
+      return new Promise(() => {})
     })
-    console.log(id)
+
     const { data } = await deleteMenu(id)
 
     if (data.code === '000000') {

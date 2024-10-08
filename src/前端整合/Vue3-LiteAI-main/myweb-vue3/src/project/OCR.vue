@@ -36,16 +36,25 @@ const submitUpload = () => {
 <template>
   <el-card>
     <template #header>
-      <h3>陌生人脸管理</h3>
+      <h3>《通用OCR》算法部署平台</h3>
     </template>
     <el-row>
       <el-col :md="24">
         <div style="height: 100px"></div>
       </el-col>
       <el-col :md="6" :offset="1">
-        <el-upload ref="uploadRef" class="avatar-uploader" action="/users/upload/" :show-file-list="false"
-          :on-change="justSelect" :before-upload="beforeAvatarUpload" drag :data="{ data: 'ppocrv3' }"
-          :auto-upload="false" :on-success="handleSuccess">
+        <el-upload
+          ref="uploadRef"
+          class="avatar-uploader"
+          action="/users/upload/"
+          :show-file-list="false"
+          :on-change="justSelect"
+          :before-upload="beforeAvatarUpload"
+          drag
+          :data="{ data: 'ppocrv3' }"
+          :auto-upload="false"
+          :on-success="handleSuccess"
+        >
           <img v-if="imageUrl" :src="imageUrl" class="avatar" />
           <el-icon v-else class="el-icon--upload" size="80"><IEpupload-filled /></el-icon>
         </el-upload>
@@ -77,7 +86,6 @@ const submitUpload = () => {
   height: 350px;
   object-fit: contain;
 }
-
 .avatar-uploader img {
   justify-content: center;
   align-items: center;
@@ -113,14 +121,12 @@ const submitUpload = () => {
   justify-content: center;
   align-items: center;
 }
-
 .result-demo img {
   width: 95%;
   height: 100%;
   display: block;
   object-fit: contain;
 }
-
 .rec_res {
   width: 410px;
   height: 434px;

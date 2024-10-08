@@ -16,9 +16,9 @@ const handleLogout = async () => {
     type: 'warning'
   }).catch(() => {
     ElMessage.info('取消退出操作')
-    return new Promise(() => { })
+    return new Promise(() => {})
   })
-  await logout().catch(() => { })
+  await logout().catch(() => {})
   ElMessage.success('用户成功退出!')
   useTokenStore().saveToken('')
   router.push({ name: 'login' })
@@ -27,7 +27,7 @@ const handleLogout = async () => {
 
 <template>
   <el-header>
-    <h4 class="title">家庭安全监控系统</h4>
+    <h4 class="title">Algorithm deployment</h4>
     <el-dropdown>
       <span class="el-dropdown-link">
         <el-avatar :size="32" :src="img_url" />
@@ -55,18 +55,14 @@ const handleLogout = async () => {
   .el-icon {
     margin-right: 17px;
   }
-
   .title {
     color: bisque;
     font-size: 24px;
   }
-
   background-color: darkkhaki;
 }
-
 .el-dropdown {
   margin-left: auto;
-
   .el-dropdown-link {
     display: flex;
     justify-content: center;

@@ -1,7 +1,6 @@
 import request from '@/utils/request'
 
 type Common<T> = {
-  [x: string]: string
   code: string
   data: T
   mesg: string
@@ -25,12 +24,5 @@ export const deleteMenu = (id: string) => {
   return request<Common<boolean>>({
     method: 'DELETE',
     url: `/users/delete/${id}`
-  })
-}
-
-export const getFaceById = (id: string) => {
-  return request<Common<boolean>>({
-    method: 'POST',
-    url: `/users/getFaceById/${id}`
   })
 }

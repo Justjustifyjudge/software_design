@@ -17,9 +17,9 @@ const handleLogout = async () => {
     type: 'warning'
   }).catch(() => {
     ElMessage.info('取消退出操作')
-    return new Promise(() => { })
+    return new Promise(() => {})
   })
-  await logout().catch(() => { })
+  await logout().catch(() => {})
   ElMessage.success('用户成功退出!')
   useTokenStore().saveToken('')
   router.push({ name: 'login' })
@@ -57,15 +57,12 @@ const handleLogout = async () => {
   display: flex;
   align-items: center;
   background-color: #f4f4f5;
-
   .el-icon {
     margin-right: 17px;
   }
 }
-
 .el-dropdown {
   margin-left: auto;
-
   .el-dropdown-link {
     display: flex;
     justify-content: center;
